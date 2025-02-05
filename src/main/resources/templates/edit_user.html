@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Update user</title>
+</head>
+<body>
+<form th:method="POST" th:action="@{/springsecurity/admin/edit(id=${user.id})}" th:object="${user}">
+    <div align="center"></div>
+    <label for="username">Enter firstname: </label>
+    <input type="text" th:field="*{username}" id="username"/>
+
+    <br/>
+
+    <label for="password">Enter lastname: </label>
+    <input type="text" th:field="*{password}" id="password"/>
+
+    <br/>
+
+    <label for="email">Enter age: </label>
+    <input type="text" th:field="*{email}" id="email"/>
+
+    <br/>
+
+    <input type="submit" value="Update">
+</form>
+
+
+</body>
+</html>

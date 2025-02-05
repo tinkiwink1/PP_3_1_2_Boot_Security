@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns="http://www.w3.org/1999/html">
+<head>
+    <meta charset="UTF-8">
+    <title>Spring security app</title>
+</head>
+<body th:object="${user}">
+<h1>Hello, Admin!</h1>
+<a th:utext="${user.email}"></a>
+
+<a th:href="@{/springsecurity/admin/users}">Check users</a>
+
+</body>
+</html>
