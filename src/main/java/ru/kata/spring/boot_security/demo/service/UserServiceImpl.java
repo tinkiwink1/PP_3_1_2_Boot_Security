@@ -8,8 +8,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.kata.spring.boot_security.demo.entity.Role;
 import ru.kata.spring.boot_security.demo.entity.User;
-import ru.kata.spring.boot_security.demo.repositories.RoleDao;
-import ru.kata.spring.boot_security.demo.repositories.UserDao;
+import ru.kata.spring.boot_security.demo.repositories.RoleDaoImpl;
+import ru.kata.spring.boot_security.demo.repositories.UserDaoImpl;
 
 
 import java.util.HashSet;
@@ -18,14 +18,13 @@ import java.util.Set;
 
 @Service
 public class UserServiceImpl implements UserService {
-    private final UserDao userDao;
-    private final RoleDao roleRepository;
+    private final UserDaoImpl userDao;
+    private final RoleDaoImpl roleDao;
     private final PasswordEncoder passwordEncoder;
-
     @Autowired
-    public UserServiceImpl(UserDao userDao, RoleDao roleRepository, PasswordEncoder passwordEncoder) {
+    public UserServiceImpl(UserDaoImpl userDao, RoleDaoImpl roleDao, PasswordEncoder passwordEncoder) {
         this.userDao = userDao;
-        this.roleRepository = roleRepository;
+        this.roleDao = roleDao;
         this.passwordEncoder = passwordEncoder;
     }
 
@@ -55,38 +54,39 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public void saveUser(String name, String email, String password, Set<Role> roles) {
+    public void saveUser(String username, String password, String email, Set<Role> roles) {
         User user = new User();
-        user.setUsername(name);
-        user.setEmail(email);
+        user.setUsername(username);
         user.setPassword(passwordEncoder.encode(password));
+        user.setEmail(email);
         user.setRoles(roles);
         userDao.saveUser(user);
     }
 
-    @Override
-    @Transactional
-    public void saveUser(String name, String email, String password) {
-        User user = new User();
-        user.setUsername(name);
-        user.setEmail(email);
-        user.setPassword(passwordEncoder.encode(password));
-        Set<Role> roles=new HashSet<>();
-        if (name.equals("admin")) {
-            roles.add(roleRepository.findRoleByName("ROLE_ADMIN"));
-        }
-        user.setRoles(roles);
-        userDao.saveUser(user);
-    }
+//    @Override
+//    @Transactional
+//    public void saveUser(String username, String password, String email) {
+//        User user = new User();
+//        user.setUsername(username);
+//        user.setEmail(email);
+//        user.setPassword(passwordEncoder.encode(password));
+//        Set<Role> roles=new HashSet<>();
+//        roles.add(roleDao.findRoleByName("ROLE_USER"));
+//        if (username.equals("admin")) {
+//            roles.add(roleDao.findRoleByName("ROLE_ADMIN"));
+//        }
+//        user.setRoles(roles);
+//        userDao.saveUser(user);
+//    }
 
     @Override
     @Transactional
-    public void updateUser(Long id, String name, String email, String password) {
+    public void updateUser(Long id, String name, String password, String email) {
         User user = findUserById(id);
         if (user != null) {
             user.setUsername(name);
-            user.setEmail(email);
             user.setPassword(passwordEncoder.encode(password));
+            user.setEmail(email);
             userDao.updateUser(user);
         }
     }
@@ -105,6 +105,6 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional(readOnly = true)
     public List<Role> getAllRoles() {
-        return roleRepository.getAllRoles();
+        return roleDao.getAllRoles();
     }
 }

@@ -10,15 +10,10 @@ import ru.kata.spring.boot_security.demo.entity.User;
 
 import java.security.Principal;
 
-@RestController("/springsecurity")
+@RestController
 public class MainController {
     @GetMapping
     public String index() {
         return "index";
-    }
-    @GetMapping("/user")
-    public String user(Model model, @AuthenticationPrincipal User user) {
-        model.addAttribute("user", user);
-        return "user";
     }
 }

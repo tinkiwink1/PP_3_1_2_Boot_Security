@@ -21,11 +21,11 @@ public interface UserService extends UserDetailsService {
 
     void deleteUser(Long id);
 
-    void saveUser(String name, String email, String password);
+//    void saveUser(String name, String password, String email);
 
-    void saveUser(String name, String email, String password, Set<Role> roles);
+    void saveUser(String name, String password, String email, Set<Role> roles);
 
-    void updateUser(Long id, String name, String email, String password);
+    void updateUser(Long id, String name, String password, String email);
 
     @Override
     UserDetails loadUserByUsername(String username) throws UsernameNotFoundException;

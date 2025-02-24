@@ -1,30 +1,40 @@
-<!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org"
-      xmlns="http://www.w3.org/1999/html">
+<!DOCTYPE html >
+<html lang="en" xmlns:th="https://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>New user</title>
+    <title>Title</title>
 </head>
 <body>
-<div align="center">
-    <form th:method="POST" th:action="@{/springsecurity/admin/new_user}" th:object="${user}">
-        <label for="username">Enter username: </label>
-        <input type="text" th:field="*{username}" id="username"/>
+<form th:method="POST" th:action="@{/admin/new_user}" th:object="${user}">
+    <label for="username">Enter username: </label>
+    <input type="text" th:field="*{username}" id="username"/>
 
-        <br/>
+    <br/>
 
-        <label for="password">Enter password: </label>
-        <input type="text" th:field="*{password}" id="password"/>
+    <label for="password">Enter password: </label>
+    <input type="text" th:field="*{password}" id="password"/>
 
-        <br/>
+    <br/>
 
-        <label for="email">Enter email: </label>
-        <input type="text" th:field="*{email}" id="email"/>
+    <label for="email">Enter email: </label>
+    <input type="text" th:field="*{email}" id="email"/>
 
-        <br/>
+    <br/>
 
-        <input type="submit" value="Add user">
-    </form>
-</div>
+    <label>Roles:</label>
+    <div>
+        <input type="checkbox" id="role_admin" name="selectedRoles" value="ROLE_ADMIN">
+        <label for="role_admin">Admin</label>
+    </div>
+    <div>
+        <input type="checkbox" id="role_user" name="selectedRoles" value="ROLE_USER">
+        <label for="role_user">User</label>
+    </div>
+
+
+        <button type="submit">Add user</button>
+
+</form>
+
 </body>
 </html>
