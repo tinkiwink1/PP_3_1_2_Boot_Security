@@ -16,11 +16,11 @@ public class RoleDaoImpl implements RoleDao {
     private EntityManager entityManager;
 
     @Override
-    public Role findRoleByName(String name) {
+    public Role findRoleByName(String authority) {
         try {
             return entityManager.createQuery(
-                            "SELECT r FROM Role r WHERE r.name = :name", Role.class)
-                    .setParameter("name", name)
+                            "SELECT r FROM Role r WHERE r.authority = :authority", Role.class)
+                    .setParameter("authority", authority)
                     .getSingleResult();
         } catch (NoResultException e) {
             return null;

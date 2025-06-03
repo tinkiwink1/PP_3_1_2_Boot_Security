@@ -12,7 +12,7 @@ import java.security.Principal;
 
 @RestController
 public class MainController {
-    @GetMapping
+    @GetMapping("/")
     public String index() {
         return "index";
     }

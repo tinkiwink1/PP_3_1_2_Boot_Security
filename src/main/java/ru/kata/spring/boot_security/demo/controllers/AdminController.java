@@ -16,6 +16,7 @@ import org.springframework.web.servlet.ModelAndView;
 import ru.kata.spring.boot_security.demo.entity.Role;
 import ru.kata.spring.boot_security.demo.entity.User;
 import ru.kata.spring.boot_security.demo.repositories.RoleDao;
+import ru.kata.spring.boot_security.demo.service.RoleService;
 import ru.kata.spring.boot_security.demo.service.UserService;
 
 import java.security.Principal;
@@ -26,69 +27,69 @@ import java.util.Set;
 
 
 @Controller
+@RequestMapping("/admin")
 public class AdminController {
     private final UserService userService;
-    private final RoleDao roleDao;
+    private final RoleService roleService;
 
     @Autowired
-    public AdminController(UserService userService, RoleDao roleDao) {
+    public AdminController(UserService userService, RoleService roleService) {
         this.userService = userService;
-        this.roleDao = roleDao;
+        this.roleService = roleService;
     }
 
-    @GetMapping("/admin")
+    @GetMapping
     public String admin(Model model, Principal principal) {
-        User user = userService.findUserByName(principal.getName());
-        model.addAttribute("currentUser", user);
-        List<User> users = userService.getAllUsers();
-        model.addAttribute("users", users);
+        model.addAttribute("currentUser", userService.findUserByName(principal.getName()));
+        model.addAttribute("users", userService.getAllUsers());
         return "admin";
     }
 
-    @GetMapping("/admin/new_user")
+    @GetMapping("/new_user")
     public ModelAndView newUser(@ModelAttribute("user") User user) {
         ModelAndView mav = new ModelAndView("new_user");
-        List<Role> roles = roleDao.getAllRoles();
-        mav.addObject("allRoles", roles);
+        mav.addObject("allRoles", roleService.getRoles());
         return mav;
     }
 
-    @PostMapping("/admin/new_user")
-    public String saveUser(@ModelAttribute User user,
+    @PostMapping("/new_user")
+    public ModelAndView saveUser(@ModelAttribute User user,
                            @RequestParam Set<String> selectedRoles) {
-        Set<Role> roles = new HashSet<>();
-        if (!selectedRoles.isEmpty()) {
-            Arrays.stream(selectedRoles.toArray()).forEach(roleName -> roles.add(roleDao.findRoleByName(roleName.toString())));
-        }
+        ModelAndView mav = new ModelAndView("redirect:/admin");
+        Set<Role> roles = roleService.selectRoles(selectedRoles);
         user.setRoles(roles);
         userService.saveUser(user.getUsername(), user.getPassword(), user.getEmail(), user.getRoles());
-        return "redirect:/admin";
+        return mav;
     }
 
-    @GetMapping("/admin/delete_user")
-    public String deleteUser(@RequestParam Long id) {
+    @GetMapping("/delete_user")
+    public ModelAndView deleteUser(@RequestParam Long id) {
+        ModelAndView mav = new ModelAndView("redirect:/admin");
         userService.deleteUser(id);
-        return "redirect:/admin";
+        return mav;
     }
 
-    @GetMapping("/admin/edit")
-    public String editUser(@RequestParam Long id, Model model) {
+    @GetMapping("/edit")
+    public ModelAndView editUser(@RequestParam Long id, Model model) {
+        ModelAndView mav = new ModelAndView("edit");
         model.addAttribute("user", userService.findUserById(id));
-        return "edit";
+        return mav;
     }
-    @PostMapping("/admin/edit")
-    public String setEdit(@RequestParam Long id, @ModelAttribute User user) {
+    @PostMapping("/edit")
+    public ModelAndView setEdit(@RequestParam Long id, @ModelAttribute User user) {
+        ModelAndView mav = new ModelAndView("redirect:/admin");
         userService.updateUser(id, user.getUsername(), user.getPassword(), user.getEmail());
-        return "redirect:/admin";
+        return mav;
     }
 
-    @PostMapping("/admin/findByID")
-    public String findByName(@RequestParam Long id, Model model, @AuthenticationPrincipal UserDetails userDetails) {
+    @PostMapping("/findByID")
+    public ModelAndView findByName(@RequestParam Long id, Model model, @AuthenticationPrincipal UserDetails userDetails) {
+        ModelAndView mav = new ModelAndView("admin");
         User user = userService.findUserByName(userDetails.getUsername());
         model.addAttribute("currentUser", user);
         model.addAttribute("userFound", userService.findUserById(id));
         model.addAttribute("users", userService.getAllUsers());
-        return "admin";
+        return mav;
     }
 
 }

@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.kata.spring.boot_security.demo.entity.Role;
 import ru.kata.spring.boot_security.demo.entity.User;
 import ru.kata.spring.boot_security.demo.repositories.RoleDaoImpl;
+import ru.kata.spring.boot_security.demo.repositories.UserDao;
 import ru.kata.spring.boot_security.demo.repositories.UserDaoImpl;
 
 
@@ -18,13 +19,11 @@ import java.util.Set;
 
 @Service
 public class UserServiceImpl implements UserService {
-    private final UserDaoImpl userDao;
-    private final RoleDaoImpl roleDao;
+    private final UserDao userDao;
     private final PasswordEncoder passwordEncoder;
     @Autowired
-    public UserServiceImpl(UserDaoImpl userDao, RoleDaoImpl roleDao, PasswordEncoder passwordEncoder) {
+    public UserServiceImpl(UserDao userDao, PasswordEncoder passwordEncoder) {
         this.userDao = userDao;
-        this.roleDao = roleDao;
         this.passwordEncoder = passwordEncoder;
     }
 
@@ -62,23 +61,6 @@ public class UserServiceImpl implements UserService {
         user.setRoles(roles);
         userDao.saveUser(user);
     }
-
-//    @Override
-//    @Transactional
-//    public void saveUser(String username, String password, String email) {
-//        User user = new User();
-//        user.setUsername(username);
-//        user.setEmail(email);
-//        user.setPassword(passwordEncoder.encode(password));
-//        Set<Role> roles=new HashSet<>();
-//        roles.add(roleDao.findRoleByName("ROLE_USER"));
-//        if (username.equals("admin")) {
-//            roles.add(roleDao.findRoleByName("ROLE_ADMIN"));
-//        }
-//        user.setRoles(roles);
-//        userDao.saveUser(user);
-//    }
-
     @Override
     @Transactional
     public void updateUser(Long id, String name, String password, String email) {
@@ -100,11 +82,5 @@ public class UserServiceImpl implements UserService {
             throw new UsernameNotFoundException("User not found");
         }
         return user;
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public List<Role> getAllRoles() {
-        return roleDao.getAllRoles();
     }
 }
